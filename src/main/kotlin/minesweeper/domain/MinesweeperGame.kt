@@ -13,20 +13,17 @@ class MinesweeperGame(height: String, width: String, mineCount: String) {
 
     fun openCell(positionString: String): PositionCheckResult {
         val boardSize = minesweeperBoard.boardSize
-        val positionCheckResult: PositionCheckResult = Position.requestPosition(positionString, boardSize)
-        (
-            return when (positionCheckResult) {
-                is PositionCheckResult.Success -> {
-                    val position = Position.from(positionString)
-                    playState = minesweeperBoard.openCell(position)
-                    if (playState != PlayState.PLAYING) minesweeperBoard.openAll()
-                    positionCheckResult
-                }
-                is PositionCheckResult.InvalidateX,
-                is PositionCheckResult.InvalidateY,
-                PositionCheckResult.InvalidateExpression -> positionCheckResult
-            }.exhaustive
-            )
+        return when (val positionCheckResult: PositionCheckResult = Position.requestPosition(positionString, boardSize)) {
+            is PositionCheckResult.Success -> {
+                val position = Position.from(positionString)
+                playState = minesweeperBoard.openCell(position)
+                if (playState != PlayState.PLAYING) minesweeperBoard.openAll()
+                positionCheckResult
+            }
+            is PositionCheckResult.InvalidateX,
+            is PositionCheckResult.InvalidateY,
+            PositionCheckResult.InvalidateExpression -> positionCheckResult
+        }
     }
 
     companion object {
